@@ -1,4 +1,4 @@
-import { Sidebar } from '@/components/Sidebar';
+import { Sidebar } from '@/components/Sidebar/Sidebar';
 import { TopMenu } from '@/components/TopMenu';
 import { CiBellOn, CiBookmarkCheck, CiChat1, CiLogout, CiMenuBurger, CiSearch } from 'react-icons/ci';
 

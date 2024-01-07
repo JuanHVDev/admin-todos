@@ -1,3 +1,4 @@
+import { getUseServerSession } from "@/auth/auth-actions";
 import prisma from "@/lib/prisma";
 import { Todo } from "@prisma/client";
 import { NextResponse, NextRequest } from "next/server";
@@ -8,13 +9,19 @@ interface Segments {
     };
 }
 
-const getTodo = async (id: string): Promise<Todo | undefined> => {
+const getTodo = async (id: string): Promise<Todo | null> => {
+    const user = await getUseServerSession();
+
+    if (!user) {
+        return null;
+    }
+
     const todo = await prisma.todo.findFirst({
         where: { id },
     });
 
-    if (!todo) {
-        return undefined;
+    if (todo?.userId !== user.id) {
+        return null;
     }
     return todo;
 };
@@ -33,6 +40,7 @@ const putSchema = object({
 export async function PUT(req: Request, { params }: Segments) {
     const { id } = params;
     const todo = await getTodo(id);
+
     if (!todo) {
         return NextResponse.json({ message: `Todo con el i: ${id} no existe` });
     }
@@ -54,4 +62,3 @@ export async function PUT(req: Request, { params }: Segments) {
 
     //  return NextResponse.json({ { title :{ title } }, { status: 201 });
 }
-
